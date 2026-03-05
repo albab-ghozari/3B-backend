@@ -1,0 +1,62 @@
+// This is your Prisma schema file
+
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+        
+
+// 1. Tabel Kamar (Data Master)
+model Kamar {
+  id             Int              @id @default(autoincrement())
+  nomor          String           // 1, 2, 3, 4, 5, 6
+  gedung         String           // "QBS" atau "FQ"
+  santri         Santri[]
+  penilaianKamar PenilaianKamar[]
+
+  @@unique([nomor, gedung]) // Agar tidak ada nomor 1 ganda di gedung yang sama
+}
+
+// 2. Tabel Santri (Data Master)
+model Santri {
+  id              Int               @id @default(autoincrement())
+  nama            String
+  kamarId         Int
+  kamar           Kamar             @relation(fields: [kamarId], references: [id])
+  penilaianSantri PenilaianSantri[] // Relasi ke history nilai per individu
+}
+
+// 3. Tabel Penilaian Per Santri (Kerapihan Tempat Tidur & Lemari)
+model PenilaianSantri {
+  id              Int      @id @default(autoincrement())
+  santriId        Int
+  santri          Santri   @relation(fields: [santriId], references: [id])
+  rapiTempatTidur Int // Skala nilai (misal 1-100)
+  rapiLemari      Int
+  tanggal         DateTime @default(now())
+}
+
+// 4. Tabel Penilaian Kamar (Lantai, Kamar Mandi, Tempat Sampah, Gantungan)
+model PenilaianKamar {
+  id            Int      @id @default(autoincrement())
+  kamarId       Int
+  kamar         Kamar    @relation(fields: [kamarId], references: [id])
+  lantai        Int
+  kamarMandi    Int
+  tempatSampah  Int
+  gantunganBaju Int
+  tanggal       DateTime @default(now())
+}
+
+model Admin {
+  id       Int    @id @default(autoincrement())
+  username String @unique
+  password String
+  nama     String
+}
