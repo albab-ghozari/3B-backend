@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const SECRET_KEY = "RAHASIA_PESANTREN_123";
+const SECRET_KEY = process.env.JWT_SECRET || "RAHASIA_LOKAL_123";
 
 const authenticateToken = (req, res, next) => {
    // Ambil token dari header 'Authorization'

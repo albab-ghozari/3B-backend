@@ -3,7 +3,7 @@ const prisma = new PrismaClient();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
-const SECRET_KEY = "RAHASIA_PESANTREN_123"; // Ganti dengan kata rahasia Anda
+const SECRET_KEY = process.env.JWT_SECRET || "RAHASIA_LOKAL_123";
 
 const login = async (req, res) => {
    const { username, password } = req.body;
